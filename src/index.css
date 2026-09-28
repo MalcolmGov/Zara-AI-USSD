@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+:root {
+  --phone-lcd-bg: #8ea889;
+  --phone-lcd-text: #142214;
+  --phone-lcd-dark: #0d170d;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #06080d;
+  color: #f1f5f9;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(51, 65, 85, 0.8);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 1);
+}
+
+/* Monospace fonts */
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+.font-lcd {
+  font-family: 'JetBrains Mono', 'VT323', monospace;
+  letter-spacing: -0.02em;
+}
+.font-tech {
+  font-family: 'Chakra Petch', sans-serif;
+}
+
+/* Scanline effect for retro phone display */
+.screen-scanlines {
+  background: linear-gradient(
+    rgba(18, 28, 18, 0) 50%, 
+    rgba(0, 0, 0, 0.1) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.02),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.02)
+  );
+  background-size: 100% 3px, 6px 100%;
+}
+
+/* Glow effects */
+.glow-emerald {
+  box-shadow: 0 0 25px -4px rgba(16, 185, 129, 0.4);
+}
+.glow-cyan {
+  box-shadow: 0 0 25px -4px rgba(6, 182, 212, 0.4);
+}
+.glow-purple {
+  box-shadow: 0 0 25px -4px rgba(168, 85, 247, 0.35);
+}
+.glow-amber {
+  box-shadow: 0 0 25px -4px rgba(245, 158, 11, 0.35);
+}
+
+/* Card glass */
+.glass-panel {
+  background: rgba(13, 18, 30, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-panel-subtle {
+  background: rgba(17, 24, 39, 0.5);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Tactile button bevels */
+.tactile-key {
+  background: linear-gradient(180deg, #2d3340 0%, #1a1e28 100%);
+  box-shadow: 0 4px 0 #10131a, 0 6px 10px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  transition: all 0.06s ease;
+}
+.tactile-key:active, .tactile-key.pressed {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #10131a, 0 2px 4px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+.tactile-key-green {
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 0 #047857, 0 6px 12px rgba(16, 185, 129, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+.tactile-key-green:active, .tactile-key-green.pressed {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #047857, 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.tactile-key-red {
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 4px 0 #b91c1c, 0 6px 12px rgba(239, 68, 68, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+.tactile-key-red:active, .tactile-key-red.pressed {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #b91c1c, 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+
+/* Animations */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.animate-blink {
+  animation: blink 0.9s infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s infinite;
+}

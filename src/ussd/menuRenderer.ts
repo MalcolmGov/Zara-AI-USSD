@@ -1,0 +1,168 @@
+import { UssdScreen } from '../types/ussd';
+import { LANGUAGES } from '../data/languagesData';
+import { MARKETPLACE_AGENTS } from '../data/agentsData';
+
+export class MenuRenderer {
+  static getHomeScreen(langCode = 'en-ZA'): UssdScreen {
+    const lang = LANGUAGES[langCode] || LANGUAGES['en-ZA'];
+    return {
+      id: 'home',
+      type: 'menu',
+      title: lang.welcomeTitle,
+      header: lang.welcomeTitle,
+      prompt: `${lang.welcomeTitle}\n${lang.welcomeSubtitle}\n\n${lang.menuOption1}\n${lang.menuOption2}\n${lang.menuOption3}\n${lang.menuOption4}\n${lang.menuOption5}\n\n${lang.exitOption}`,
+      options: [
+        { key: '1', label: lang.menuOption1 },
+        { key: '2', label: lang.menuOption2 },
+        { key: '3', label: lang.menuOption3 },
+        { key: '4', label: lang.menuOption4 },
+        { key: '5', label: lang.menuOption5 },
+        { key: '0', label: lang.exitOption }
+      ],
+      footer: lang.replyPlaceholder
+    };
+  }
+
+  static getNaturalLanguageInputScreen(langCode = 'en-ZA'): UssdScreen {
+    const lang = LANGUAGES[langCode] || LANGUAGES['en-ZA'];
+    return {
+      id: 'natural-language-prompt',
+      type: 'input',
+      title: 'Tell Zara',
+      prompt: `${lang.promptWhatNeeded}\n\n(e.g. "I need electricity", "Find me a job", "Check my grant", "My maize leaves are yellow")`,
+      allowTextInput: true,
+      inputPlaceholder: 'Tell Zara what you need...',
+      footer: 'Reply:'
+    };
+  }
+
+  static getBrowseAgentsScreen(): UssdScreen {
+    const lines = MARKETPLACE_AGENTS.map((a, i) => `${i + 1}. ${a.shortName}`).join('\n');
+    return {
+      id: 'browse-agents',
+      type: 'menu',
+      title: 'Agent Marketplace',
+      prompt: `Zara Agent Marketplace\n\n${lines}\n\n0. Main menu`,
+      options: [
+        ...MARKETPLACE_AGENTS.map((a, i) => ({ key: String(i + 1), label: a.shortName, action: a.id })),
+        { key: '0', label: 'Main menu' }
+      ],
+      footer: 'Reply:'
+    };
+  }
+
+  static getCreditsScreen(balance = 48, monthlyUsed = 12): UssdScreen {
+    return {
+      id: 'credits-menu',
+      type: 'menu',
+      title: 'Zara AI Credits',
+      prompt: `Zara AI Credits\n\nBalance: ${balance}\nThis month used: ${monthlyUsed}\n\n1. Buy credits\n2. Usage history\n0. Main menu`,
+      options: [
+        { key: '1', label: 'Buy credits' },
+        { key: '2', label: 'Usage history' },
+        { key: '0', label: 'Main menu' }
+      ],
+      footer: 'Reply:'
+    };
+  }
+
+  static getBuyCreditsScreen(): UssdScreen {
+    return {
+      id: 'credits-bundles',
+      type: 'menu',
+      title: 'Buy Credits',
+      prompt: 'Choose a bundle:\n\n1. 20 credits - R5\n2. 50 credits - R10\n3. 120 credits - R20\n\n0. Back',
+      options: [
+        { key: '1', label: '20 credits - R5' },
+        { key: '2', label: '50 credits - R10' },
+        { key: '3', label: '120 credits - R20' },
+        { key: '0', label: 'Back' }
+      ],
+      footer: 'Reply:'
+    };
+  }
+
+  static getPaymentMethodScreen(bundleText: string): UssdScreen {
+    return {
+      id: 'credits-payment-method',
+      type: 'menu',
+      title: 'Payment Method',
+      prompt: `Bundle: ${bundleText}\n\nSelect payment method:\n\n1. Airtime\n2. Mobile Money\n3. Bank\n\n0. Cancel`,
+      options: [
+        { key: '1', label: 'Airtime' },
+        { key: '2', label: 'Mobile Money' },
+        { key: '3', label: 'Bank' },
+        { key: '0', label: 'Cancel' }
+      ],
+      footer: 'Reply:'
+    };
+  }
+
+  static getCreditsSuccessScreen(added: number, newBalance: number): UssdScreen {
+    return {
+      id: 'credits-success',
+      type: 'result',
+      title: 'Payment Successful',
+      prompt: `Payment successful.\n\n${added} AI Credits added.\nNew balance: ${newBalance}\n\n1. Main menu\n0. Exit`,
+      options: [
+        { key: '1', label: 'Main menu' },
+        { key: '0', label: 'Exit' }
+      ],
+      footer: 'Reply:'
+    };
+  }
+
+  static getRecentActivityScreen(): UssdScreen {
+    return {
+      id: 'recent-activity',
+      type: 'menu',
+      title: 'Recent Activity',
+      prompt: 'Recent Zara Activity:\n\n1. Today: Bought R100 Electricity\n2. Yesterday: Maize Crop Advisory\n3. 18 Sep: SASSA Grant Verified\n\n0. Main menu',
+      options: [
+        { key: '0', label: 'Main menu' }
+      ],
+      footer: 'Reply:'
+    };
+  }
+
+  static getChangeLanguageScreen(): UssdScreen {
+    return {
+      id: 'change-language',
+      type: 'menu',
+      title: 'Change Language',
+      prompt: 'Change Language / Shintsha Ulimi:\n\n1. English\n2. isiZulu\n3. Sesotho\n4. Afrikaans\n\n0. Main menu',
+      options: [
+        { key: '1', label: 'English' },
+        { key: '2', label: 'isiZulu' },
+        { key: '3', label: 'Sesotho' },
+        { key: '4', label: 'Afrikaans' },
+        { key: '0', label: 'Main menu' }
+      ],
+      footer: 'Reply:'
+    };
+  }
+
+  static getExpiredScreen(): UssdScreen {
+    return {
+      id: 'session-expired',
+      type: 'expired',
+      title: 'Session Expired',
+      prompt: 'USSD session expired.\n\nThank you for using Zara AI.\nDial *120*9272# to start a new session.',
+      footer: 'Press Call or End'
+    };
+  }
+
+  static getTimeoutErrorScreen(): UssdScreen {
+    return {
+      id: 'network-timeout',
+      type: 'error',
+      title: 'Network Timeout',
+      prompt: 'Connection timed out.\nNetwork error (SS7 Gateway timeout).\n\n1. Retry\n0. Exit',
+      options: [
+        { key: '1', label: 'Retry' },
+        { key: '0', label: 'Exit' }
+      ],
+      footer: 'Reply:'
+    };
+  }
+}
