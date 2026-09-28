@@ -62,6 +62,8 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isSessionActive, dialledDigits, onDial, onEndCall]);
 
+  const [screenTheme, setScreenTheme] = useState<'lcd' | 'oled'>('lcd');
+
   const handleKeyPress = (key: string) => {
     if (!isSessionActive) {
       setDialledDigits(prev => (prev === '*120*9272#' ? key : prev + key));
@@ -93,27 +95,50 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         {/* Top Speaker Ear-piece */}
         <div className="w-16 h-1.5 bg-slate-800 rounded-full mb-3 shadow-inner border border-slate-700/50" />
 
-        {/* Phone Brand Name */}
-        <div className="flex items-center gap-1.5 mb-2.5">
-          <span className="text-[11px] font-extrabold tracking-widest text-slate-400 font-tech">
-            ZARA
-          </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[9px] font-bold text-slate-500 tracking-wider">
-            SERIES 100
-          </span>
+        {/* Phone Brand Name & Theme Switch */}
+        <div className="w-full px-2 flex items-center justify-between mb-2.5">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] font-extrabold tracking-widest text-slate-300 font-tech">
+              ZARA
+            </span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[9px] font-bold text-slate-400 tracking-wider">
+              SERIES 100
+            </span>
+          </div>
+
+          {/* Screen Mode Toggle Button */}
+          <button
+            type="button"
+            onClick={() => setScreenTheme(prev => prev === 'lcd' ? 'oled' : 'lcd')}
+            className={`px-2 py-0.5 rounded-md text-[9px] font-mono font-bold tracking-wider uppercase border transition-all cursor-pointer ${
+              screenTheme === 'lcd'
+                ? 'bg-[#a4c79b] text-[#061205] border-[#425a3f] shadow-sm'
+                : 'bg-slate-800 text-emerald-400 border-emerald-500/40'
+            }`}
+            title="Switch display backlight mode (LCD Green / OLED Dark)"
+          >
+            {screenTheme === 'lcd' ? '📟 LCD Green' : '🌙 OLED Dark'}
+          </button>
         </div>
 
         {/* Screen Bezel */}
-        <div className="w-full bg-[#0d1219] p-3 rounded-2xl border-2 border-slate-800 shadow-2xl relative">
+        <div className="w-full bg-[#0d1219] p-2.5 rounded-2xl border-2 border-slate-800 shadow-2xl relative">
           {/* LCD Screen Display Box */}
-          <div className="w-full h-[240px] sm:h-[260px] rounded-lg overflow-hidden border border-slate-900/80 shadow-inner relative">
+          <div 
+            className="w-full h-[240px] sm:h-[260px] rounded-lg overflow-hidden border shadow-inner relative transition-colors duration-200"
+            style={{ 
+              backgroundColor: screenTheme === 'lcd' ? '#a4c79b' : '#090e15',
+              borderColor: screenTheme === 'lcd' ? '#394e36' : '#1e293b'
+            }}
+          >
             {!isSessionActive ? (
               <DiallerScreen
                 dialledNumber={dialledDigits}
                 onSetDialledNumber={setDialledDigits}
                 onCall={handleCallButton}
                 networkName={networkName}
+                theme={screenTheme}
               />
             ) : (
               <UssdDialogScreen
@@ -126,6 +151,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                 onSubmitReply={onSubmitReply}
                 onCancelSession={onEndCall}
                 networkName={networkName}
+                theme={screenTheme}
               />
             )}
           </div>
