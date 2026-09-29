@@ -5,6 +5,7 @@ import { ChannelAdapter } from './channelAdapter';
 import { IntentRouter } from '../ai/intentRouter';
 import { AgentRegistry } from '../agents/agentRegistry';
 import { CREDIT_BUNDLES, MockPaymentAPI } from '../services/mockPaymentAPI';
+import { MockSMSAPI, MockVoiceAPI } from '../services/mockSMSAPI';
 import { MARKETPLACE_AGENTS } from '../data/agentsData';
 
 export type SessionEventListener = (telemetry: EngineTelemetry, event?: EventLogEntry) => void;
@@ -143,6 +144,10 @@ export class SessionManager {
       home = MenuRenderer.getBankHomeScreen();
     } else if (this.session.partnerConfig.mode === 'vas_injection') {
       home = MenuRenderer.getVasHomeScreen();
+    } else if (this.session.partnerConfig.mode === 'predictive_zero_hop') {
+      home = MenuRenderer.getPredictiveZeroHopScreen();
+    } else if (this.session.partnerConfig.mode === 'spaza_swarm') {
+      home = MenuRenderer.getSpazaSwarmScreen();
     } else {
       home = MenuRenderer.getHomeScreen(this.session.language);
     }
@@ -173,6 +178,12 @@ export class SessionManager {
       homeScreen = MenuRenderer.getBankHomeScreen();
     } else if (partnerConfig.mode === 'vas_injection') {
       homeScreen = MenuRenderer.getVasHomeScreen();
+    } else if (partnerConfig.mode === 'predictive_zero_hop') {
+      homeScreen = MenuRenderer.getPredictiveZeroHopScreen();
+    } else if (partnerConfig.mode === 'voice_handoff') {
+      homeScreen = MenuRenderer.getVoiceHandoffScreen();
+    } else if (partnerConfig.mode === 'spaza_swarm') {
+      homeScreen = MenuRenderer.getSpazaSwarmScreen();
     } else {
       homeScreen = MenuRenderer.getHomeScreen('en-ZA');
     }
@@ -207,6 +218,11 @@ export class SessionManager {
       partner: partnerConfig.name,
       pattern: partnerConfig.patternName
     }, 'success');
+
+    if (partnerConfig.mode === 'voice_handoff') {
+      this.logEvent('CHANNEL_DISPATCHED', 'Cellular Voice Callback queued via SIP/SS7 Interconnect: Call ringing in 1s');
+      await MockVoiceAPI.triggerCall(this.session.msisdn, 'Zara Voice AI (isiZulu/English) - Freephone Carrier Callback');
+    }
 
     this.startTimer();
     this.notify(evt);
@@ -302,7 +318,14 @@ export class SessionManager {
     this.session.sessionData['currentScreenId'] = screen.id;
 
     // 1. Check Exit from Home screens
-    if (input === '0' && (screen.id === 'home' || screen.id === 'bank-home' || screen.id === 'vas-home')) {
+    if (input === '0' && (
+      screen.id === 'home' || 
+      screen.id === 'bank-home' || 
+      screen.id === 'vas-home' ||
+      screen.id === 'predictive-home' ||
+      screen.id === 'spaza-swarm-home' ||
+      screen.id === 'voice-handoff'
+    )) {
       this.endSession();
       return MenuRenderer.getExpiredScreen();
     }
@@ -497,6 +520,132 @@ export class SessionManager {
           ...screen,
           prompt: `Invalid option.\n\n${screen.prompt}`
         };
+      }
+    }
+
+    // 2D. Futuristic 1: Predictive Zero-Hop Home Screen
+    if (screen.id === 'predictive-home') {
+      this.session.screenHistory.push(screen);
+
+      if (input === '1') {
+        // Quick-Buy usual R100 Power (1-Click pre-computed)
+        this.logEvent('AGENT_SELECTED', 'Predictive Zero-Hop executing 1-Click R100 Electricity purchase (Meter ...6789 pre-filled)');
+        const agent = AgentRegistry.getAgent('electricity');
+        this.session.activeAgentId = agent.id;
+        this.session.sessionData['activeAgentName'] = agent.name;
+        this.session.sessionData['activeNodes'] = ['feature-phone', 'ussd-gateway', 'channel-adapter', 'selected-agent', 'enterprise-api', 'cross-channel'];
+        const agentResponse = await agent.handle('1', {
+          sessionId: this.session.sessionId,
+          msisdn: this.session.msisdn,
+          language: this.session.language,
+          entities: { amount: 100, meterNumber: '07123456789' },
+          sessionData: {
+            ...this.session.sessionData,
+            currentScreenId: 'elec-confirm-purchase',
+            meterNumber: '07123456789',
+            amount: 100
+          },
+          creditsRemaining: this.creditsBalance
+        });
+        this.applyAgentResponse(agentResponse);
+        return this.session.currentScreen;
+      } else if (input === '2') {
+        // Send usual R500 voucher to Gogo
+        this.logEvent('AGENT_SELECTED', 'Predictive Zero-Hop executing R500 Cash Voucher transfer');
+        const agent = AgentRegistry.getAgent('financial');
+        this.session.activeAgentId = agent.id;
+        this.session.sessionData['activeAgentName'] = agent.name;
+        this.session.sessionData['activeNodes'] = ['feature-phone', 'ussd-gateway', 'channel-adapter', 'selected-agent'];
+        const agentResponse = await agent.handle('1', {
+          sessionId: this.session.sessionId,
+          msisdn: this.session.msisdn,
+          language: this.session.language,
+          entities: { amount: 500 },
+          sessionData: { ...this.session.sessionData, currentScreenId: 'fin-main-menu' },
+          creditsRemaining: this.creditsBalance
+        });
+        this.applyAgentResponse(agentResponse);
+        return this.session.currentScreen;
+      } else if (input === '3') {
+        // Type what you need (NLU)
+        const nlpScreen = MenuRenderer.getNaturalLanguageInputScreen(this.session.language);
+        this.session.currentScreen = nlpScreen;
+        this.notify();
+        return nlpScreen;
+      } else if (input === '4') {
+        // All Services & Marketplace
+        const browseScreen = MenuRenderer.getBrowseAgentsScreen();
+        this.session.currentScreen = browseScreen;
+        this.notify();
+        return browseScreen;
+      } else {
+        return {
+          ...screen,
+          prompt: `Invalid option.\n\n${screen.prompt}`
+        };
+      }
+    }
+
+    if (screen.id === 'voice-handoff') {
+      this.endSession();
+      return MenuRenderer.getExpiredScreen();
+    }
+
+    // 2E. Futuristic 3: The Spaza Swarm Collective Bidding
+    if (screen.id === 'spaza-swarm-home') {
+      this.session.screenHistory.push(screen);
+
+      if (input === '1') {
+        // Confirm & Pay with Spaza Wallet
+        this.logEvent('API_CALLED', 'Spaza Swarm Wholesale Auction PO #8492 issued to Tiger Depot [R780.00]');
+        this.logEvent('CHANNEL_DISPATCHED', 'SMS dispatch to local courier: Township Delivery Batch #402');
+        await MockSMSAPI.send(
+          this.session.msisdn,
+          'SPAZA SWARM CONFIRMATION: Pool order #8492 confirmed. R780 paid via Spaza Wallet. Tiger Depot dispatching to your shop tomorrow 09:00. Delivery driver: Sipho (+27834591238).'
+        );
+        const orderScreen: UssdScreen = {
+          id: 'spaza-success',
+          type: 'notification',
+          title: 'Order Confirmed',
+          prompt: 'Spaza Swarm Bulk Order #8492\nStatus: CONFIRMED & PAID\n\nTotal: R780 (Saved R210)\nSupplier: Tiger Depot\nDelivery: Tomorrow 09:00\n\nSMS confirmation sent.\n\n0. Main menu',
+          options: [{ key: '0', label: 'Main menu' }],
+          footer: 'Reply:'
+        };
+        this.session.currentScreen = orderScreen;
+        this.notify();
+        return orderScreen;
+      } else if (input === '2') {
+        // Inspect supplier bids
+        const bidsScreen: UssdScreen = {
+          id: 'spaza-bids',
+          type: 'menu',
+          title: 'Wholesale Bids',
+          prompt: 'Live Supplier Bids (84 shops pooled):\n\n1. Tiger Depot: R780 (Winner)\n2. Metro Cash&Carry: R820\n3. Pioneer Foods: R860\n\n1. Accept Tiger Depot (R780)\n0. Back',
+          options: [
+            { key: '1', label: 'Accept Tiger Depot (R780)' },
+            { key: '0', label: 'Back' }
+          ],
+          footer: 'Reply:'
+        };
+        this.session.currentScreen = bidsScreen;
+        this.notify();
+        return bidsScreen;
+      } else {
+        return {
+          ...screen,
+          prompt: `Invalid option.\n\n${screen.prompt}`
+        };
+      }
+    }
+
+    if (screen.id === 'spaza-bids') {
+      if (input === '0') {
+        const swarmHome = MenuRenderer.getSpazaSwarmScreen();
+        this.session.currentScreen = swarmHome;
+        this.notify();
+        return swarmHome;
+      } else if (input === '1') {
+        return this.processInputLogic('1');
       }
     }
 

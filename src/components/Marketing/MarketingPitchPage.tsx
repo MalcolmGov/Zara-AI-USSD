@@ -15,7 +15,13 @@ import {
   Lock,
   BatteryMedium,
   WifiOff,
-  ArrowUpRight
+  ArrowUpRight,
+  Server,
+  Cpu,
+  PhoneCall,
+  Users,
+  Radio,
+  Database
 } from 'lucide-react';
 
 interface MarketingPitchPageProps {
@@ -443,6 +449,303 @@ export const MarketingPitchPage: React.FC<MarketingPitchPageProps> = ({ onLaunch
               <span>Test Pattern B on Phone Simulator</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 5: THE FUTURISTIC FRONTIER: MAKING THE IMPOSSIBLE POSSIBLE */}
+      <section className="space-y-6">
+        <div className="space-y-2">
+          <div className="text-xs font-mono font-bold uppercase tracking-wider text-pink-400 flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4" />
+            <span>World-First Innovations</span>
+          </div>
+          <h2 className="text-2xl lg:text-3xl font-bold tracking-tight text-white font-tech">
+            The Futuristic Frontier: Making the Impossible, Possible
+          </h2>
+          <p className="text-sm text-slate-400 max-w-3xl leading-relaxed">
+            USSD was standardized in 1997 for GSM network diagnostics. Zara reimagines it as an autonomous, multi-agent edge AI interface—bringing capabilities to a $10 feature phone that the industry believed required 5G smartphones and heavy cloud apps.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Card 1: Predictive Zero-Hop */}
+          <div className="glass-panel rounded-2xl p-6 border border-pink-500/30 space-y-4 flex flex-col justify-between relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-pink-500/20 transition-all" />
+            <div className="space-y-3 relative z-10">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-bold px-2 py-1 rounded bg-pink-500/20 text-pink-300 border border-pink-500/40 flex items-center gap-1.5">
+                  <Radio className="w-3 h-3 text-pink-400" />
+                  <span>PREDICTIVE ZERO-HOP</span>
+                </span>
+                <span className="text-xs font-mono text-slate-400">*120*9272*1#</span>
+              </div>
+              <h3 className="text-lg font-bold text-white font-tech">Contextual Telepathy Before Screen 1</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Aggregator webhooks pass MSISDN and Cell Tower CID. Zara joins this instantly with real-time external APIs (Eskom loadshedding schedule, weather, previous utility patterns).
+              </p>
+              <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 font-mono text-xs text-slate-300 space-y-1">
+                <div className="text-pink-400 font-bold">1. Buy R100 Electricity (Soweto Meter #8492)</div>
+                <div className="text-amber-400">2. Loadshedding in 25 min (Prep generator)</div>
+                <div className="text-slate-400">3. Standard Zara Menu</div>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                <b className="text-slate-200">The Impossible:</b> Zero menu navigation. Predictive one-keypress execution for high-frequency township survival tasks.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onLaunchSimulator('predictive')}
+              className="text-xs font-mono text-pink-400 hover:text-pink-300 flex items-center gap-1 font-bold pt-2 cursor-pointer relative z-10"
+            >
+              <span>Test Zero-Hop on Simulator</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Card 2: Flash & Talk Voice Handoff */}
+          <div className="glass-panel rounded-2xl p-6 border border-emerald-500/30 space-y-4 flex flex-col justify-between relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/20 transition-all" />
+            <div className="space-y-3 relative z-10">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-bold px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5">
+                  <PhoneCall className="w-3 h-3 text-emerald-400" />
+                  <span>FLASH &amp; TALK</span>
+                </span>
+                <span className="text-xs font-mono text-slate-400">*120*9272*0#</span>
+              </div>
+              <h3 className="text-lg font-bold text-white font-tech">Zero-Data Vernacular Voice Handoff</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Feature phone keyboards make typing tedious. User dials USSD and presses 1. Zara ends the USSD session and dispatches an instant SS7/SIP telecommunication callback within 800ms.
+              </p>
+              <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 font-mono text-xs text-slate-300 space-y-1">
+                <div className="text-emerald-400 font-bold">Zara: "Sawubona Malcolm! Ngicela ukukusiza..."</div>
+                <div className="text-slate-300">Carrier Line: Zero data consumed</div>
+                <div className="text-slate-400">Dial: Freephone toll-free carrier link</div>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                <b className="text-slate-200">The Impossible:</b> High-bandwidth natural voice AI on any analog cellphone without requiring data bundles or smartphone hardware.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onLaunchSimulator('voice')}
+              className="text-xs font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1 font-bold pt-2 cursor-pointer relative z-10"
+            >
+              <span>Test Voice Handoff on Simulator</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Card 3: The Spaza Swarm */}
+          <div className="glass-panel rounded-2xl p-6 border border-cyan-500/30 space-y-4 flex flex-col justify-between relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-cyan-500/20 transition-all" />
+            <div className="space-y-3 relative z-10">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-bold px-2 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 flex items-center gap-1.5">
+                  <Users className="w-3 h-3 text-cyan-400" />
+                  <span>THE SPAZA SWARM</span>
+                </span>
+                <span className="text-xs font-mono text-slate-400">*120*9272*8#</span>
+              </div>
+              <h3 className="text-lg font-bold text-white font-tech">Autonomous Collective Bargaining</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Township micro-merchants lack wholesale purchasing power. Zara pools individual USSD orders across Alexandra &amp; Soweto into decentralized procurement swarms.
+              </p>
+              <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 font-mono text-xs text-slate-300 space-y-1">
+                <div className="text-cyan-400 font-bold">42 Spazas Pooled: 350 bags Maize</div>
+                <div className="text-emerald-400">Supplier Counter-Bid: -18.5% bulk rate</div>
+                <div className="text-slate-400">Press 1 to confirm PO #8492</div>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                <b className="text-slate-200">The Impossible:</b> Wall Street-grade algorithmic purchasing power placed into the hands of informal township merchants over 2G.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onLaunchSimulator('spaza')}
+              className="text-xs font-mono text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-bold pt-2 cursor-pointer relative z-10"
+            >
+              <span>Test Spaza Swarm on Simulator</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
+        {/* 3 Secondary Futuristic Pillars */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
+            <h4 className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+              <Cpu className="w-3.5 h-3.5 text-purple-400" />
+              <span>GSM 7-Bit Semantic Compression</span>
+            </h4>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Domain tokenizers and dynamic acronym packing compress complex agent decisions into a single 182-character frame without information loss.
+            </p>
+          </div>
+          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
+            <h4 className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+              <Database className="w-3.5 h-3.5 text-blue-400" />
+              <span>Zero-Data Physical World Actuation</span>
+            </h4>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Generates 20-digit cryptographic STS utility tokens and smart solar inverter release codes, transforming basic 2G phones into physical IoT controllers.
+            </p>
+          </div>
+          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
+            <h4 className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>SIM-Bound Zero-Knowledge Attestation</span>
+            </h4>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Utilizes the SIM card's IMSI/Ki cryptographic pairing and carrier HSS authentication to verify identity, eliminating fraud and insecure SMS OTPs.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 6: PRODUCTION DEPLOYMENT BLUEPRINT & INTEGRATION MATRIX */}
+      <section className="space-y-6">
+        <div className="space-y-2">
+          <div className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+            <Server className="w-4 h-4" />
+            <span>Enterprise Implementation Architecture</span>
+          </div>
+          <h2 className="text-2xl lg:text-3xl font-bold tracking-tight text-white font-tech">
+            Production Deployment Blueprint &amp; Integration Matrix
+          </h2>
+          <p className="text-sm text-slate-400 max-w-3xl leading-relaxed">
+            Everything required to deploy Zara AI USSD into a tier-1 telecom, banking switch, or national utility infrastructure. Built for strict latency constraints, carrier compliance, and sovereign data residency.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Pillar 1: Telco Aggregator & MAP Layer */}
+          <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+            <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs font-bold uppercase tracking-wider">
+              <Server className="w-4 h-4" />
+              <span>1. Telco Aggregator &amp; MAP/HLR Gateway Layer</span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Connects directly to Mobile Network Operator (MNO) USSD Gateways (USSD-GW) via standard aggregator protocols or direct SS7 signaling.
+            </p>
+            <div className="space-y-2 text-xs">
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
+                <span className="font-mono text-emerald-400 font-bold shrink-0">Aggregators:</span>
+                <span className="text-slate-300">Africa's Talking, Infobip, Clickatell, or direct SIGTRAN / M3UA link to Vodacom, MTN, Telkom, Airtel.</span>
+              </div>
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
+                <span className="font-mono text-amber-400 font-bold shrink-0">Latency SLA:</span>
+                <span className="text-slate-300">Strict &lt; 2,500ms webhook round-trip. Gateway terminates session if total turn exceeds 3,000ms.</span>
+              </div>
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
+                <span className="font-mono text-cyan-400 font-bold shrink-0">Regulatory:</span>
+                <span className="text-slate-300">WASPA Code of Conduct &amp; ICASA shortcode allocation (*120* standard rated vs *130* reverse-billed/free to user).</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Pillar 2: Sub-Second Multilingual AI Orchestration */}
+          <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+            <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs font-bold uppercase tracking-wider">
+              <Cpu className="w-4 h-4" />
+              <span>2. Sub-Second Multilingual AI Orchestration</span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Dual-speed hybrid LLM pipeline designed specifically to fulfill telecom 2.5s timeouts while executing high-precision natural language understanding.
+            </p>
+            <div className="space-y-2 text-xs">
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
+                <span className="font-mono text-cyan-400 font-bold shrink-0">Inference:</span>
+                <span className="text-slate-300">Groq Llama-3.3-70B (&lt;350ms TTFT for intent &amp; slot extraction) + Claude 3.5 Haiku (complex multi-turn reasoning).</span>
+              </div>
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
+                <span className="font-mono text-purple-400 font-bold shrink-0">Vernaculars:</span>
+                <span className="text-slate-300">Lelapa AI Vulavula API for native South African language tokenization (isiZulu, Sesotho, Afrikaans, Xhosa).</span>
+              </div>
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
+                <span className="font-mono text-emerald-400 font-bold shrink-0">Slang Dictionary:</span>
+                <span className="text-slate-300">Custom township colloquial semantic embeddings ("chommie", "loadshedding", "stokvel", "airtime advance").</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Pillar 3: Carrier Voice Telephony & IVR Infrastructure */}
+          <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+            <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs font-bold uppercase tracking-wider">
+              <PhoneCall className="w-4 h-4" />
+              <span>3. Carrier Voice Telephony &amp; Callback Engine</span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Powers the "Flash &amp; Talk" voice handoff by bridging USSD session completion directly into zero-rated carrier voice circuits.
+            </p>
+            <div className="space-y-2 text-xs">
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
+                <span className="font-mono text-emerald-400 font-bold shrink-0">Voice Bridge:</span>
+                <span className="text-slate-300">Asterisk / FreeSWITCH cloud PBX cluster with SIP Trunking into Telkom/Vodacom/MTN carrier interconnects.</span>
+              </div>
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
+                <span className="font-mono text-cyan-400 font-bold shrink-0">Speech Engine:</span>
+                <span className="text-slate-300">ElevenLabs low-latency WebSocket neural TTS + Africa's Talking Voice API for instant dial-out callbacks.</span>
+              </div>
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
+                <span className="font-mono text-amber-400 font-bold shrink-0">Zero Data:</span>
+                <span className="text-slate-300">Calls run entirely over standard circuit-switched GSM voice channels. Zero internet access needed by user.</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Pillar 4: Transactional & Utility Gateways */}
+          <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+            <div className="flex items-center gap-2 text-amber-400 font-mono text-xs font-bold uppercase tracking-wider">
+              <Database className="w-4 h-4" />
+              <span>4. Transactional, Utility &amp; Banking Switches</span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Secure enterprise connections for real-time value-added services, token issuance, and account balance reconciliation.
+            </p>
+            <div className="space-y-2 text-xs">
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
+                <span className="font-mono text-amber-400 font-bold shrink-0">VAS Retail:</span>
+                <span className="text-slate-300">Kazang, Flash, and Blu Label OpenAPI integration for airtime, data bundles, and municipal utilities.</span>
+              </div>
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
+                <span className="font-mono text-emerald-400 font-bold shrink-0">STS Electricity:</span>
+                <span className="text-slate-300">Eskom Key Management Centre (KMC) STS-6 standard token generator integration for instant 20-digit tokens.</span>
+              </div>
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
+                <span className="font-mono text-blue-400 font-bold shrink-0">Banking Switch:</span>
+                <span className="text-slate-300">ISO 8583 / BankservAfrica EFT switch integration with HSM PIN encryption for cash vouchers and payouts.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Technical Specification Summary Table */}
+        <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+          <h3 className="text-lg font-bold text-white font-tech flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            <span>Infrastructure, Data Sovereignty &amp; Security Baseline</span>
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+              <div className="font-mono font-bold text-purple-400">POPIA Data Residency</div>
+              <p className="text-slate-300 leading-relaxed">
+                100% sovereign hosting in AWS Cape Town (af-south-1) or Azure South Africa North (Johannesburg). Zero consumer financial data crosses international borders.
+              </p>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+              <div className="font-mono font-bold text-cyan-400">State &amp; Session Memory</div>
+              <p className="text-slate-300 leading-relaxed">
+                Distributed Redis Cluster with 180s TTL (&lt;5ms read/write). Manages ephemeral session state across stateless HTTP hops and handles drop recovery.
+              </p>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+              <div className="font-mono font-bold text-emerald-400">Scalability &amp; Availability</div>
+              <p className="text-slate-300 leading-relaxed">
+                Kubernetes (EKS) auto-scaling pods sustaining 10,000 concurrent sessions/node with Cloudflare Enterprise DDoS shielding and 99.99% uptime carrier SLA.
+              </p>
+            </div>
           </div>
         </div>
       </section>

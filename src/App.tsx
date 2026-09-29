@@ -111,6 +111,15 @@ export const App: React.FC = () => {
     } else if (scenarioId === 'vas') {
       await handleDial('*120*7727#');
       return;
+    } else if (scenarioId === 'predictive') {
+      await handleDial('*120*9272*1#');
+      return;
+    } else if (scenarioId === 'voice') {
+      await handleDial('*120*9272*0#');
+      return;
+    } else if (scenarioId === 'spaza') {
+      await handleDial('*120*9272*8#');
+      return;
     }
 
     // Dial Zara AI first

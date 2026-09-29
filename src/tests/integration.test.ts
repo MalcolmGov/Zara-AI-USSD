@@ -247,6 +247,62 @@ async function runTests() {
   assert(sm.getTelemetry().activeNodes.includes('enterprise-hook'), 'VAS session activeNodes includes enterprise-hook');
   sm.endSession();
 
+  // TEST 15: Futuristic Mode 1 - Predictive Zero-Hop USSD (*120*9272*1#)
+  console.log('\n--- Testing Futuristic Mode 1: Predictive Zero-Hop USSD (*120*9272*1#) ---');
+  assert(ChannelAdapter.isServiceCode('*120*9272*1#'), 'Predictive Zero-Hop shortcode *120*9272*1# recognized');
+  const predConfig = ChannelAdapter.getPartnerConfig('*120*9272*1#');
+  assert(predConfig.mode === 'predictive_zero_hop' && predConfig.patternType === 'Futuristic', 'Predictive Zero-Hop config resolved to Futuristic pattern');
+
+  const predDialOk = await sm.startDialling('*120*9272*1#');
+  assert(predDialOk, 'Predictive Zero-Hop session initiated');
+  const predHome = sm.getCurrentScreen();
+  assert(predHome?.id === 'predictive-home', 'Predictive Zero-Hop home screen rendered without menu navigation');
+  assert(predHome?.prompt.includes('Load-shedding'), 'Predictive screen includes proactive loadshedding alert');
+
+  // 1-Click execution: Buy usual R100 Power (Meter ...6789 pre-filled)
+  await sm.submitInput('1');
+  assert(sm.getCurrentScreen()?.id === 'elec-success' || sm.getCurrentScreen()?.title?.includes('Purchase Successful'), '1-Click pre-computed electricity purchase executed');
+  assert(sm.getTelemetry().activeNodes.includes('enterprise-api'), 'Telemetry captured enterprise-api execution');
+  sm.endSession();
+
+  // TEST 16: Futuristic Mode 2 - Flash & Talk Voice Handoff (*120*9272*0#)
+  console.log('\n--- Testing Futuristic Mode 2: Flash & Talk Voice Handoff (*120*9272*0#) ---');
+  assert(ChannelAdapter.isServiceCode('*120*9272*0#'), 'Voice Handoff shortcode *120*9272*0# recognized');
+  const voiceConfig = ChannelAdapter.getPartnerConfig('*120*9272*0#');
+  assert(voiceConfig.mode === 'voice_handoff' && voiceConfig.patternType === 'Futuristic', 'Voice handoff config resolved to Futuristic pattern');
+
+  const voiceDialOk = await sm.startDialling('*120*9272*0#');
+  assert(voiceDialOk, 'Voice handoff session initiated');
+  const voiceHome = sm.getCurrentScreen();
+  assert(voiceHome?.id === 'voice-handoff', 'Voice handoff connection screen rendered');
+  assert(voiceHome?.prompt.includes('carrier voice line'), 'Voice handoff screen confirms inbound call dispatch');
+
+  // Verify voice message dispatched in outbound history
+  const historyAfterVoice = MockSMSAPI.getHistory();
+  const voiceMsg = historyAfterVoice.find(m => m.channel === 'voice');
+  assert(Boolean(voiceMsg), 'Zero-rated carrier voice callback dispatched to subscriber');
+  sm.endSession();
+
+  // TEST 17: Futuristic Mode 3 - The Spaza Swarm Collective Bidding (*120*9272*8#)
+  console.log('\n--- Testing Futuristic Mode 3: The Spaza Swarm Collective Bidding (*120*9272*8#) ---');
+  assert(ChannelAdapter.isServiceCode('*120*9272*8#'), 'Spaza Swarm shortcode *120*9272*8# recognized');
+  const spazaConfig = ChannelAdapter.getPartnerConfig('*120*9272*8#');
+  assert(spazaConfig.mode === 'spaza_swarm' && spazaConfig.patternType === 'Futuristic', 'Spaza Swarm config resolved to Futuristic pattern');
+
+  const spazaDialOk = await sm.startDialling('*120*9272*8#');
+  assert(spazaDialOk, 'Spaza Swarm session initiated');
+  const spazaHome = sm.getCurrentScreen();
+  assert(spazaHome?.id === 'spaza-swarm-home', 'Spaza Swarm collective bidding home screen rendered');
+  assert(spazaHome?.prompt.includes('Tiger Depot') && spazaHome?.prompt.includes('Saved R210'), 'Screen reflects algorithmic multi-merchant discount pooling');
+
+  // Confirm and lock pool order #8492
+  await sm.submitInput('1');
+  assert(sm.getCurrentScreen()?.id === 'spaza-success', 'Spaza Swarm order confirmed and paid');
+  const historyAfterSpaza = MockSMSAPI.getHistory();
+  const spazaSMS = historyAfterSpaza.find(m => m.content.includes('SPAZA SWARM CONFIRMATION'));
+  assert(Boolean(spazaSMS), 'SMS delivery confirmation dispatched for Spaza Swarm order');
+  sm.endSession();
+
   console.log('\n====================================================');
   console.log(`TEST SUMMARY: ${passed} PASSED, ${failed} FAILED`);
   console.log('====================================================');

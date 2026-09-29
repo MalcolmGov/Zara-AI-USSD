@@ -24,6 +24,30 @@ export const PARTNER_SHORTCODES: Record<string, PartnerConfig> = {
     patternName: 'Pattern B: Sub-Menu Injection (Zero-Risk)',
     patternType: 'B',
     description: 'Enterprise preserves legacy menu 100% untouched. Zara AI is injected as option 4 to handle cross-VAS intents.'
+  },
+  '*120*9272*1#': {
+    mode: 'predictive_zero_hop',
+    code: '*120*9272*1#',
+    name: 'Predictive Zero-Hop AI',
+    patternName: 'Contextual Telepathy Engine',
+    patternType: 'Futuristic',
+    description: 'Pre-computes customer intent using MSISDN, cell-tower, and Eskom schedule before screen 1 renders.'
+  },
+  '*120*9272*0#': {
+    mode: 'voice_handoff',
+    code: '*120*9272*0#',
+    name: 'Flash & Talk Voice Handoff',
+    patternName: 'Zero-Data Cellular Voice Interconnect',
+    patternType: 'Futuristic',
+    description: 'Sub-second handoff from USSD to an inbound carrier neural voice line speaking native vernacular.'
+  },
+  '*120*9272*8#': {
+    mode: 'spaza_swarm',
+    code: '*120*9272*8#',
+    name: 'The Spaza Swarm',
+    patternName: 'Autonomous Multi-Agent Collective Bargaining',
+    patternType: 'Futuristic',
+    description: 'Pools informal merchant demand to negotiate bulk pallet wholesale pricing via autonomous reverse auction.'
   }
 };
 
@@ -34,6 +58,9 @@ export class ChannelAdapter {
     const clean = code.trim();
     if (clean === '*120*321#' || clean === '*120*321') return PARTNER_SHORTCODES['*120*321#'];
     if (clean === '*120*7727#' || clean === '*120*7727' || clean.toUpperCase() === '*120*SPAR#') return PARTNER_SHORTCODES['*120*7727#'];
+    if (clean === '*120*9272*1#' || clean === '*120*9272*1') return PARTNER_SHORTCODES['*120*9272*1#'];
+    if (clean === '*120*9272*0#' || clean === '*120*9272*0') return PARTNER_SHORTCODES['*120*9272*0#'];
+    if (clean === '*120*9272*8#' || clean === '*120*9272*8') return PARTNER_SHORTCODES['*120*9272*8#'];
     return PARTNER_SHORTCODES['*120*9272#'];
   }
 
@@ -83,7 +110,10 @@ export class ChannelAdapter {
     return (
       clean === '*120*9272#' || clean === '*120*9272' || clean === '*120*ZARA#' ||
       clean === '*120*321#' || clean === '*120*321' ||
-      clean === '*120*7727#' || clean === '*120*7727' || clean.toUpperCase() === '*120*SPAR#'
+      clean === '*120*7727#' || clean === '*120*7727' || clean.toUpperCase() === '*120*SPAR#' ||
+      clean === '*120*9272*1#' || clean === '*120*9272*1' ||
+      clean === '*120*9272*0#' || clean === '*120*9272*0' ||
+      clean === '*120*9272*8#' || clean === '*120*9272*8'
     );
   }
 }

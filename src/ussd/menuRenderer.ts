@@ -76,6 +76,51 @@ export class MenuRenderer {
     };
   }
 
+  // Futuristic 1: Zero-Hop Predictive AI Pre-Computation
+  static getPredictiveZeroHopScreen(): UssdScreen {
+    return {
+      id: 'predictive-home',
+      type: 'menu',
+      title: 'Zara Predictive AI',
+      prompt: 'Sawubona Malcolm.\n[Predictive AI • Zero-Hop]\nLoad-shedding in Sandton in 45m.\nMeter ...6789 balance is low.\n\n1. Quick-Buy usual R100 Power (1-Click)\n2. Send usual R500 voucher to Gogo\n3. Type what you need (NLU)\n4. All Services & Marketplace\n\n0. Exit',
+      options: [
+        { key: '1', label: 'Quick-Buy usual R100 Power (1-Click)' },
+        { key: '2', label: 'Send usual R500 voucher to Gogo' },
+        { key: '3', label: 'Type what you need (NLU)' },
+        { key: '4', label: 'All Services & Marketplace' },
+        { key: '0', label: 'Exit' }
+      ],
+      footer: 'Reply:'
+    };
+  }
+
+  // Futuristic 2: Flash & Talk Voice Handoff
+  static getVoiceHandoffScreen(): UssdScreen {
+    return {
+      id: 'voice-handoff',
+      type: 'notification',
+      title: 'Flash & Talk Handoff',
+      prompt: 'Zara Cellular Voice Handoff\n\nConnecting carrier voice line...\nYour phone will ring in 1 second.\n\nLanguage: isiZulu / English\nZero mobile data used.\n\n[USSD Session Complete]',
+      footer: 'Press 0 to exit'
+    };
+  }
+
+  // Futuristic 3: The Spaza Swarm Collective Bidding
+  static getSpazaSwarmScreen(): UssdScreen {
+    return {
+      id: 'spaza-swarm-home',
+      type: 'menu',
+      title: 'The Spaza Swarm',
+      prompt: 'Spaza Swarm Collective Bidding\n\nAggregated with 84 shops in 5km:\n• 10x 10kg Iwisa Maize\n• 5x 2L Sunflower Oil\n\nBest Bid: Tiger Depot (R780)\nSaved R210 (21% bulk discount)\n\n1. Confirm & Pay with Spaza Wallet\n2. Inspect supplier bids\n\n0. Exit',
+      options: [
+        { key: '1', label: 'Confirm & Pay with Spaza Wallet' },
+        { key: '2', label: 'Inspect supplier bids' },
+        { key: '0', label: 'Exit' }
+      ],
+      footer: 'Reply:'
+    };
+  }
+
   static getNaturalLanguageInputScreen(langCode = 'en-ZA'): UssdScreen {
     const lang = LANGUAGES[langCode] || LANGUAGES['en-ZA'];
     return {

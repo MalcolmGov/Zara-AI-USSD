@@ -68,72 +68,101 @@ export const DiallerScreen: React.FC<DiallerScreenProps> = ({
           }`} />
         </div>
 
-        {/* Quick Dial Presets */}
-        <div className="mt-3 flex flex-col items-center gap-1.5 w-full px-1">
-          <div className={`text-[10px] font-black uppercase tracking-wider mb-0.5 ${
+        {/* Quick Dial Presets Grid */}
+        <div className="mt-2 flex flex-col items-center gap-1 w-full px-1">
+          <div className={`text-[9px] font-black uppercase tracking-wider mb-0.5 ${
             isLcd ? 'text-[#142612]' : 'text-slate-400'
           }`}>
             Quick Gateway Presets:
           </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              onSetDialledNumber('*120*9272#');
-              onCall();
-            }}
-            className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-[11px] font-black transition-all cursor-pointer shadow-sm ${
-              isLcd
-                ? 'bg-[#183116] hover:bg-[#0c1a0b] text-[#b6f0b0] border border-[#2b4c27]'
-                : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40'
-            }`}
-          >
-            <div className="flex items-center gap-1.5">
-              <Sparkles className="w-3 h-3 text-emerald-400 shrink-0" />
-              <span className="truncate">Zara AI Marketplace</span>
-            </div>
-            <span className="text-[10px] opacity-80 shrink-0">*120*9272#</span>
-          </button>
+          <div className="grid grid-cols-2 gap-1 w-full">
+            <button
+              type="button"
+              onClick={() => {
+                onSetDialledNumber('*120*9272#');
+                onCall();
+              }}
+              className={`flex items-center gap-1 px-2 py-1.5 rounded text-[10px] font-black cursor-pointer truncate shadow-sm ${
+                isLcd ? 'bg-[#183116] text-[#b6f0b0] border border-[#2b4c27]' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+              }`}
+            >
+              <Sparkles className="w-2.5 h-2.5 shrink-0 text-emerald-400" />
+              <span className="truncate">Zara Open</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              onSetDialledNumber('*120*321#');
-              onCall();
-            }}
-            className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-[11px] font-black transition-all cursor-pointer shadow-sm ${
-              isLcd
-                ? 'bg-[#1f2d3d] hover:bg-[#131f2d] text-[#a5c8ed] border border-[#3b526d]'
-                : 'bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/40'
-            }`}
-          >
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] px-1 py-0.2 bg-blue-600 text-white rounded font-mono font-bold">A</span>
-              <span className="truncate">Apex Bank (AI Front-Door)</span>
-            </div>
-            <span className="text-[10px] opacity-80 shrink-0">*120*321#</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => {
+                onSetDialledNumber('*120*321#');
+                onCall();
+              }}
+              className={`flex items-center gap-1 px-2 py-1.5 rounded text-[10px] font-black cursor-pointer truncate shadow-sm ${
+                isLcd ? 'bg-[#1f2d3d] text-[#a5c8ed] border border-[#3b526d]' : 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
+              }`}
+            >
+              <span className="text-[8px] px-1 bg-blue-600 text-white rounded font-bold">A</span>
+              <span className="truncate">Apex Bank</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              onSetDialledNumber('*120*7727#');
-              onCall();
-            }}
-            className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-[11px] font-black transition-all cursor-pointer shadow-sm ${
-              isLcd
-                ? 'bg-[#3b2a1a] hover:bg-[#26190e] text-[#f2c99d] border border-[#63482d]'
-                : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40'
-            }`}
-          >
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] px-1 py-0.2 bg-amber-600 text-white rounded font-mono font-bold">B</span>
-              <span className="truncate">Kazang VAS (Sub-Menu)</span>
-            </div>
-            <span className="text-[10px] opacity-80 shrink-0">*120*7727#</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => {
+                onSetDialledNumber('*120*7727#');
+                onCall();
+              }}
+              className={`flex items-center gap-1 px-2 py-1.5 rounded text-[10px] font-black cursor-pointer truncate shadow-sm ${
+                isLcd ? 'bg-[#3b2a1a] text-[#f2c99d] border border-[#63482d]' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+              }`}
+            >
+              <span className="text-[8px] px-1 bg-amber-600 text-white rounded font-bold">B</span>
+              <span className="truncate">Kazang VAS</span>
+            </button>
 
-          <span className={`text-[9px] font-bold mt-0.5 text-center ${
+            <button
+              type="button"
+              onClick={() => {
+                onSetDialledNumber('*120*9272*1#');
+                onCall();
+              }}
+              className={`flex items-center gap-1 px-2 py-1.5 rounded text-[10px] font-black cursor-pointer truncate shadow-sm ${
+                isLcd ? 'bg-[#2a1b38] text-[#e0b0ff] border border-[#532e75]' : 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
+              }`}
+            >
+              <span className="text-[8px] px-1 bg-purple-600 text-white rounded font-bold">⚡</span>
+              <span className="truncate">Predictive AI</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                onSetDialledNumber('*120*9272*0#');
+                onCall();
+              }}
+              className={`flex items-center gap-1 px-2 py-1.5 rounded text-[10px] font-black cursor-pointer truncate shadow-sm ${
+                isLcd ? 'bg-[#1b3538] text-[#9df2eb] border border-[#2b5d63]' : 'bg-teal-500/20 text-teal-300 border border-teal-500/40'
+              }`}
+            >
+              <span className="text-[8px] px-1 bg-teal-600 text-white rounded font-bold">📞</span>
+              <span className="truncate">Flash Voice</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                onSetDialledNumber('*120*9272*8#');
+                onCall();
+              }}
+              className={`flex items-center gap-1 px-2 py-1.5 rounded text-[10px] font-black cursor-pointer truncate shadow-sm ${
+                isLcd ? 'bg-[#362f1c] text-[#f7e49e] border border-[#6b5826]' : 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/40'
+              }`}
+            >
+              <span className="text-[8px] px-1 bg-yellow-600 text-white rounded font-bold">🐝</span>
+              <span className="truncate">Spaza Swarm</span>
+            </button>
+          </div>
+
+          <span className={`text-[8.5px] font-bold mt-1 text-center ${
             isLcd ? 'text-[#1a3318]' : 'text-slate-400'
           }`}>
             Press Call or Enter on keyboard to dial

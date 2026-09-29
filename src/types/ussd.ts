@@ -9,6 +9,7 @@ export type UssdScreenType =
   | 'input'              // Prompt requiring text or alphanumeric input
   | 'processing'         // "Processing with [API]..."
   | 'result'             // Result screen (success, token, data)
+  | 'notification'       // Informational screen / flash notice
   | 'expired'            // "USSD session expired"
   | 'error';             // "Network error / invalid request"
 
@@ -34,14 +35,17 @@ export interface UssdScreen {
 export type PartnerIntegrationMode = 
   | 'zara_marketplace'    // Canonical *120*9272#
   | 'bank_frontdoor'       // Pattern A: Apex Bank *120*321# (AI Front-Door / Reverse Proxy)
-  | 'vas_injection';       // Pattern B: Kazang / Blue Label *120*7727# (Sub-Menu Injection)
+  | 'vas_injection'        // Pattern B: Kazang / Blue Label *120*7727# (Sub-Menu Injection)
+  | 'predictive_zero_hop'  // Futuristic: Zero-Hop Predictive Pre-computation
+  | 'voice_handoff'        // Futuristic: Flash & Talk Voice Handoff
+  | 'spaza_swarm';         // Futuristic: Autonomous Multi-Agent Negotiation
 
 export interface PartnerConfig {
   mode: PartnerIntegrationMode;
   code: string;
   name: string;
   patternName: string;
-  patternType: 'A' | 'B' | 'Marketplace';
+  patternType: 'A' | 'B' | 'Marketplace' | 'Futuristic';
   description: string;
 }
 

@@ -14,7 +14,9 @@ import {
   Coins, 
   Languages,
   Presentation,
-  Smartphone
+  Smartphone,
+  PhoneCall,
+  Users
 } from 'lucide-react';
 
 interface TopHeaderProps {
@@ -54,7 +56,10 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
     { id: 'credits', label: 'Buy AI Credits', icon: <Coins className="w-3.5 h-3.5 text-amber-300" /> },
     { id: 'zulu', label: 'isiZulu Natural Language', icon: <Languages className="w-3.5 h-3.5 text-purple-400" /> },
     { id: 'bank', label: 'Apex Bank (*120*321#) [Pattern A]', icon: <Building2 className="w-3.5 h-3.5 text-cyan-400" /> },
-    { id: 'vas', label: 'Kazang VAS (*120*7727#) [Pattern B]', icon: <Zap className="w-3.5 h-3.5 text-orange-400" /> }
+    { id: 'vas', label: 'Kazang VAS (*120*7727#) [Pattern B]', icon: <Zap className="w-3.5 h-3.5 text-orange-400" /> },
+    { id: 'predictive', label: 'Predictive Zero-Hop (*120*9272*1#)', icon: <Sparkles className="w-3.5 h-3.5 text-purple-400" /> },
+    { id: 'voice', label: 'Flash & Talk Voice (*120*9272*0#)', icon: <PhoneCall className="w-3.5 h-3.5 text-teal-400" /> },
+    { id: 'spaza', label: 'The Spaza Swarm (*120*9272*8#)', icon: <Users className="w-3.5 h-3.5 text-yellow-400" /> }
   ];
 
   return (
