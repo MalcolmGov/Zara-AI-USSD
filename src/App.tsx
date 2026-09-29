@@ -7,6 +7,7 @@ import { EventLog } from './components/Engine/EventLog';
 import { TopHeader } from './components/Controls/TopHeader';
 import { ChannelToast } from './components/Controls/ChannelToast';
 import { GuidedDemoBar } from './components/Controls/GuidedDemoBar';
+import { MarketingPitchPage } from './components/Marketing/MarketingPitchPage';
 import { UssdScreen, NetworkCondition } from './types/ussd';
 import { EngineTelemetry, EventLogEntry } from './types/engine';
 import { Smartphone, Activity, Sparkles } from 'lucide-react';
@@ -14,6 +15,7 @@ import { Smartphone, Activity, Sparkles } from 'lucide-react';
 export const App: React.FC = () => {
   const sessionMgr = SessionManager.getInstance();
 
+  const [activeView, setActiveView] = useState<'simulator' | 'pitch'>('simulator');
   const [currentScreen, setCurrentScreen] = useState<UssdScreen | null>(null);
   const [isDialling, setIsDialling] = useState(false);
   const [isRouting, setIsRouting] = useState(false);
@@ -99,6 +101,7 @@ export const App: React.FC = () => {
 
   // Scenario quick selector triggers
   const handleSelectScenario = async (scenarioId: string) => {
+    setActiveView('simulator');
     handleEndCall();
     await new Promise(res => setTimeout(res, 200));
 
@@ -264,6 +267,7 @@ export const App: React.FC = () => {
   }, [sessionMgr]);
 
   const handleStartGuidedDemo = () => {
+    setActiveView('simulator');
     if (demoTimeoutRef.current) clearTimeout(demoTimeoutRef.current);
     setGuidedDemoActive(true);
     setGuidedDemoPaused(false);
@@ -305,38 +309,52 @@ export const App: React.FC = () => {
         onSelectNetworkCondition={handleSelectNetworkCondition}
         timeRemaining={timeRemaining}
         isSessionActive={currentScreen !== null || isDialling}
+        activeView={activeView}
+        onSelectView={setActiveView}
       />
 
-      {/* Mobile Tab Switcher */}
-      <div className="lg:hidden flex items-center justify-around bg-slate-900/90 border-b border-slate-800 p-2 text-xs font-mono">
-        <button
-          type="button"
-          onClick={() => setMobileTab('phone')}
-          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg transition-all ${
-            mobileTab === 'phone'
-              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold'
-              : 'text-slate-400'
-          }`}
-        >
-          <Smartphone className="w-4 h-4" />
-          <span>Feature Phone</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setMobileTab('engine')}
-          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg transition-all ${
-            mobileTab === 'engine'
-              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold'
-              : 'text-slate-400'
-          }`}
-        >
-          <Activity className="w-4 h-4" />
-          <span>Zara AI Engine</span>
-        </button>
-      </div>
+      {/* Main View: Marketing Pitch Deck vs Interactive Simulator */}
+      {activeView === 'pitch' ? (
+        <MarketingPitchPage
+          onLaunchSimulator={(scenarioId) => {
+            setActiveView('simulator');
+            if (scenarioId) {
+              handleSelectScenario(scenarioId);
+            }
+          }}
+        />
+      ) : (
+        <>
+          {/* Mobile Tab Switcher */}
+          <div className="lg:hidden flex items-center justify-around bg-slate-900/90 border-b border-slate-800 p-2 text-xs font-mono">
+            <button
+              type="button"
+              onClick={() => setMobileTab('phone')}
+              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg transition-all ${
+                mobileTab === 'phone'
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold'
+                  : 'text-slate-400'
+              }`}
+            >
+              <Smartphone className="w-4 h-4" />
+              <span>Feature Phone</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileTab('engine')}
+              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg transition-all ${
+                mobileTab === 'engine'
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold'
+                  : 'text-slate-400'
+              }`}
+            >
+              <Activity className="w-4 h-4" />
+              <span>Zara AI Engine</span>
+            </button>
+          </div>
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-8">
+          {/* Main Content Area */}
+          <main className="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* LEFT SIDE: FEATURE PHONE SIMULATOR (5 cols on lg) */}
           <section
@@ -408,17 +426,19 @@ export const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Guided Executive Tour Floating Dock */}
-      <GuidedDemoBar
-        isActive={guidedDemoActive}
-        isPaused={guidedDemoPaused}
-        currentStepIndex={demoStepIndex}
-        totalSteps={14}
-        stepDescription={demoStepDesc}
-        onPauseResume={handlePauseResumeDemo}
-        onRestart={handleRestartDemo}
-        onClose={handleCloseDemo}
-      />
+          {/* Guided Executive Tour Floating Dock */}
+          <GuidedDemoBar
+            isActive={guidedDemoActive}
+            isPaused={guidedDemoPaused}
+            currentStepIndex={demoStepIndex}
+            totalSteps={14}
+            stepDescription={demoStepDesc}
+            onPauseResume={handlePauseResumeDemo}
+            onRestart={handleRestartDemo}
+            onClose={handleCloseDemo}
+          />
+        </>
+      )}
 
       {/* Footer */}
       <footer className="w-full border-t border-slate-800/80 py-4 px-6 text-center text-xs text-slate-500 font-mono mt-auto">

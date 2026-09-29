@@ -12,7 +12,9 @@ import {
   Building2, 
   Sprout, 
   Coins, 
-  Languages 
+  Languages,
+  Presentation,
+  Smartphone
 } from 'lucide-react';
 
 interface TopHeaderProps {
@@ -22,6 +24,8 @@ interface TopHeaderProps {
   onSelectNetworkCondition: (condition: NetworkCondition) => void;
   timeRemaining: number;
   isSessionActive: boolean;
+  activeView: 'simulator' | 'pitch';
+  onSelectView: (view: 'simulator' | 'pitch') => void;
 }
 
 export const TopHeader: React.FC<TopHeaderProps> = ({
@@ -30,7 +34,9 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   networkCondition,
   onSelectNetworkCondition,
   timeRemaining,
-  isSessionActive
+  isSessionActive,
+  activeView,
+  onSelectView
 }) => {
   const [scenarioMenuOpen, setScenarioMenuOpen] = React.useState(false);
 
@@ -74,7 +80,39 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           </div>
         </div>
 
-        {/* Center / Right Action Controls */}
+        {/* Center Mode Switcher: Interactive Simulator vs Pitch Deck */}
+        <div className="flex items-center p-1 bg-slate-900/90 border border-slate-800 rounded-xl font-mono text-xs">
+          <button
+            type="button"
+            onClick={() => onSelectView('simulator')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+              activeView === 'simulator'
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+            <span>Interactive Simulator</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onSelectView('pitch')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+              activeView === 'pitch'
+                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Presentation className="w-3.5 h-3.5" />
+            <span>Executive Pitch Deck</span>
+            <span className="text-[9px] px-1.5 py-0.2 rounded bg-cyan-500/30 text-cyan-200 font-bold uppercase tracking-wider">
+              BRIEF
+            </span>
+          </button>
+        </div>
+
+        {/* Right Action Controls */}
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Guided Demo Button */}
           <button
