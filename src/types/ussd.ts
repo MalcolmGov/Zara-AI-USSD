@@ -31,6 +31,20 @@ export interface UssdScreen {
   footer?: string;       // e.g. "Reply:" or "0. Exit"
 }
 
+export type PartnerIntegrationMode = 
+  | 'zara_marketplace'    // Canonical *120*9272#
+  | 'bank_frontdoor'       // Pattern A: Apex Bank *120*321# (AI Front-Door / Reverse Proxy)
+  | 'vas_injection';       // Pattern B: Kazang / Blue Label *120*7727# (Sub-Menu Injection)
+
+export interface PartnerConfig {
+  mode: PartnerIntegrationMode;
+  code: string;
+  name: string;
+  patternName: string;
+  patternType: 'A' | 'B' | 'Marketplace';
+  description: string;
+}
+
 export interface UssdSession {
   sessionId: string;
   msisdn: string;        // e.g. "+27 82 345 1234"
@@ -48,4 +62,5 @@ export interface UssdSession {
   workflowStep?: number;
   sessionData: Record<string, any>;
   creditsRemaining: number;
+  partnerConfig: PartnerConfig;
 }

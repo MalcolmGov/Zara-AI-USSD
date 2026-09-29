@@ -46,7 +46,9 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
     { id: 'grant', label: 'Check Grant', icon: <Building2 className="w-3.5 h-3.5 text-blue-400" /> },
     { id: 'agri', label: 'Crop Assistance (GenAI)', icon: <Sprout className="w-3.5 h-3.5 text-green-400" /> },
     { id: 'credits', label: 'Buy AI Credits', icon: <Coins className="w-3.5 h-3.5 text-amber-300" /> },
-    { id: 'zulu', label: 'isiZulu Natural Language', icon: <Languages className="w-3.5 h-3.5 text-purple-400" /> }
+    { id: 'zulu', label: 'isiZulu Natural Language', icon: <Languages className="w-3.5 h-3.5 text-purple-400" /> },
+    { id: 'bank', label: 'Apex Bank (*120*321#) [Pattern A]', icon: <Building2 className="w-3.5 h-3.5 text-cyan-400" /> },
+    { id: 'vas', label: 'Kazang VAS (*120*7727#) [Pattern B]', icon: <Zap className="w-3.5 h-3.5 text-orange-400" /> }
   ];
 
   return (

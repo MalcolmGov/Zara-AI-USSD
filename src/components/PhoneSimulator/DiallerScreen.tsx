@@ -68,27 +68,75 @@ export const DiallerScreen: React.FC<DiallerScreenProps> = ({
           }`} />
         </div>
 
-        {/* Quick Dial Suggestion */}
-        <div className="mt-4 flex flex-col items-center gap-1.5">
+        {/* Quick Dial Presets */}
+        <div className="mt-3 flex flex-col items-center gap-1.5 w-full px-1">
+          <div className={`text-[10px] font-black uppercase tracking-wider mb-0.5 ${
+            isLcd ? 'text-[#142612]' : 'text-slate-400'
+          }`}>
+            Quick Gateway Presets:
+          </div>
+
           <button
             type="button"
             onClick={() => {
               onSetDialledNumber('*120*9272#');
               onCall();
             }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black transition-all cursor-pointer shadow-md ${
+            className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-[11px] font-black transition-all cursor-pointer shadow-sm ${
               isLcd
-                ? 'bg-[#183116] hover:bg-[#0c1a0b] text-[#b6f0b0] border-2 border-[#2b4c27]'
+                ? 'bg-[#183116] hover:bg-[#0c1a0b] text-[#b6f0b0] border border-[#2b4c27]'
                 : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Preset: *120*9272# (Zara AI)</span>
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3 text-emerald-400 shrink-0" />
+              <span className="truncate">Zara AI Marketplace</span>
+            </div>
+            <span className="text-[10px] opacity-80 shrink-0">*120*9272#</span>
           </button>
-          <span className={`text-[10px] font-bold mt-1 max-w-[220px] ${
+
+          <button
+            type="button"
+            onClick={() => {
+              onSetDialledNumber('*120*321#');
+              onCall();
+            }}
+            className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-[11px] font-black transition-all cursor-pointer shadow-sm ${
+              isLcd
+                ? 'bg-[#1f2d3d] hover:bg-[#131f2d] text-[#a5c8ed] border border-[#3b526d]'
+                : 'bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/40'
+            }`}
+          >
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] px-1 py-0.2 bg-blue-600 text-white rounded font-mono font-bold">A</span>
+              <span className="truncate">Apex Bank (AI Front-Door)</span>
+            </div>
+            <span className="text-[10px] opacity-80 shrink-0">*120*321#</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              onSetDialledNumber('*120*7727#');
+              onCall();
+            }}
+            className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-[11px] font-black transition-all cursor-pointer shadow-sm ${
+              isLcd
+                ? 'bg-[#3b2a1a] hover:bg-[#26190e] text-[#f2c99d] border border-[#63482d]'
+                : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40'
+            }`}
+          >
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] px-1 py-0.2 bg-amber-600 text-white rounded font-mono font-bold">B</span>
+              <span className="truncate">Kazang VAS (Sub-Menu)</span>
+            </div>
+            <span className="text-[10px] opacity-80 shrink-0">*120*7727#</span>
+          </button>
+
+          <span className={`text-[9px] font-bold mt-0.5 text-center ${
             isLcd ? 'text-[#1a3318]' : 'text-slate-400'
           }`}>
-            Press Call button or Enter on keyboard to dial
+            Press Call or Enter on keyboard to dial
           </span>
         </div>
       </div>

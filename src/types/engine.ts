@@ -34,6 +34,7 @@ export type ArchitectureNodeId =
   | 'ussd-network'
   | 'ussd-gateway'
   | 'channel-adapter'
+  | 'enterprise-hook'
   | 'ai-router'
   | 'agent-marketplace'
   | 'selected-agent'
@@ -57,6 +58,12 @@ export interface EngineTelemetry {
   language: string;
   durationSeconds: number;
   sessionState: 'idle' | 'active' | 'expired';
+
+  // Enterprise Partner Integration
+  partnerName?: string;
+  partnerMode?: string;
+  partnerPattern?: string;
+  serviceCode?: string;
 
   // AI Router
   lastUserInput?: string;

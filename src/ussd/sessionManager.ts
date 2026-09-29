@@ -1,5 +1,5 @@
 import { UssdSession, UssdScreen, NetworkCondition } from '../types/ussd';
-import { EngineTelemetry, EventLogEntry } from '../types/engine';
+import { EngineTelemetry, EventLogEntry, ArchitectureNodeId } from '../types/engine';
 import { MenuRenderer } from './menuRenderer';
 import { ChannelAdapter } from './channelAdapter';
 import { IntentRouter } from '../ai/intentRouter';
@@ -62,6 +62,10 @@ export class SessionManager {
         language: 'en-ZA',
         durationSeconds: 0,
         sessionState: 'idle',
+        partnerName: 'Zara AI Marketplace',
+        partnerMode: 'Universal Open Marketplace',
+        partnerPattern: 'Marketplace',
+        serviceCode: '*120*9272#',
         startingBalance: 48,
         creditsConsumed: 0,
         remainingBalance: this.creditsBalance,
@@ -71,6 +75,7 @@ export class SessionManager {
 
     const duration = Math.floor((Date.now() - this.session.startTime) / 1000);
     const intentRes = this.session.sessionData['lastIntentResult'];
+    const pConf = this.session.partnerConfig;
 
     return {
       sessionId: this.session.sessionId,
@@ -80,6 +85,10 @@ export class SessionManager {
       language: this.session.language,
       durationSeconds: duration,
       sessionState: this.session.isExpired ? 'expired' : 'active',
+      partnerName: pConf.name,
+      partnerMode: pConf.patternName,
+      partnerPattern: pConf.patternType,
+      serviceCode: pConf.code,
       lastUserInput: this.session.sessionData['lastUserInput'],
       intentResult: intentRes,
       activeAgentId: this.session.activeAgentId,
@@ -127,14 +136,50 @@ export class SessionManager {
     return entry;
   }
 
+  private returnToHome(): UssdScreen {
+    if (!this.session) return MenuRenderer.getHomeScreen('en-ZA');
+    let home: UssdScreen;
+    if (this.session.partnerConfig.mode === 'bank_frontdoor') {
+      home = MenuRenderer.getBankHomeScreen();
+    } else if (this.session.partnerConfig.mode === 'vas_injection') {
+      home = MenuRenderer.getVasHomeScreen();
+    } else {
+      home = MenuRenderer.getHomeScreen(this.session.language);
+    }
+
+    this.session.activeAgentId = undefined;
+    this.session.currentWorkflow = undefined;
+    this.session.sessionData['activeAgentName'] = undefined;
+    this.session.sessionData['workflowStatus'] = undefined;
+    this.session.sessionData['activeNodes'] = this.session.partnerConfig.patternType !== 'Marketplace'
+      ? ['feature-phone', 'ussd-gateway', 'enterprise-hook', 'channel-adapter']
+      : ['feature-phone', 'ussd-gateway', 'channel-adapter'];
+    this.session.currentScreen = home;
+    this.notify();
+    return home;
+  }
+
   async startDialling(dialledString: string): Promise<boolean> {
     if (!ChannelAdapter.isServiceCode(dialledString)) {
       this.logEvent('ERROR_OCCURRED', `Invalid USSD code dialled: "${dialledString}"`, { code: dialledString }, 'warning');
       return false;
     }
 
+    const partnerConfig = ChannelAdapter.getPartnerConfig(dialledString);
     const sessionId = `ussd-${Math.random().toString(36).substring(2, 8)}`;
-    const homeScreen = MenuRenderer.getHomeScreen('en-ZA');
+    
+    let homeScreen: UssdScreen;
+    if (partnerConfig.mode === 'bank_frontdoor') {
+      homeScreen = MenuRenderer.getBankHomeScreen();
+    } else if (partnerConfig.mode === 'vas_injection') {
+      homeScreen = MenuRenderer.getVasHomeScreen();
+    } else {
+      homeScreen = MenuRenderer.getHomeScreen('en-ZA');
+    }
+
+    const initialNodes = partnerConfig.patternType !== 'Marketplace'
+      ? ['feature-phone', 'ussd-network', 'ussd-gateway', 'enterprise-hook', 'channel-adapter']
+      : ['feature-phone', 'ussd-network', 'ussd-gateway', 'channel-adapter'];
 
     this.session = {
       sessionId,
@@ -149,15 +194,18 @@ export class SessionManager {
       currentScreen: homeScreen,
       screenHistory: [],
       sessionData: {
-        activeNodes: ['feature-phone', 'ussd-network', 'ussd-gateway', 'channel-adapter']
+        activeNodes: initialNodes
       },
-      creditsRemaining: this.creditsBalance
+      creditsRemaining: this.creditsBalance,
+      partnerConfig
     };
 
-    const evt = this.logEvent('SESSION_STARTED', `USSD session initiated via ${dialledString}`, {
+    const evt = this.logEvent('SESSION_STARTED', `USSD session initiated via ${dialledString} [${partnerConfig.name}]`, {
       sessionId,
       msisdn: '+27 82 *** 1234',
-      channel: 'USSD'
+      channel: 'USSD',
+      partner: partnerConfig.name,
+      pattern: partnerConfig.patternName
     }, 'success');
 
     this.startTimer();
@@ -226,10 +274,15 @@ export class SessionManager {
     });
 
     try {
-      return await ChannelAdapter.simulateNetworkTransmission(
+      const nextScreen = await ChannelAdapter.simulateNetworkTransmission(
         () => this.processInputLogic(cleanInput),
         this.networkCondition
       );
+      if (this.session) {
+        this.session.currentScreen = nextScreen;
+        this.notify();
+      }
+      return nextScreen;
     } catch (err: any) {
       if (err.message === 'USSD_TIMEOUT') {
         const timeoutScreen = MenuRenderer.getTimeoutErrorScreen();
@@ -242,27 +295,14 @@ export class SessionManager {
     }
   }
 
-  private returnToHome(): UssdScreen {
-    if (!this.session) return MenuRenderer.getHomeScreen('en-ZA');
-    const home = MenuRenderer.getHomeScreen(this.session.language);
-    this.session.activeAgentId = undefined;
-    this.session.currentWorkflow = undefined;
-    this.session.sessionData['activeAgentName'] = undefined;
-    this.session.sessionData['workflowStatus'] = undefined;
-    this.session.sessionData['activeNodes'] = ['feature-phone', 'ussd-gateway', 'channel-adapter'];
-    this.session.currentScreen = home;
-    this.notify();
-    return home;
-  }
-
   private async processInputLogic(input: string): Promise<UssdScreen> {
     if (!this.session) throw new Error('No session');
 
     const screen = this.session.currentScreen;
     this.session.sessionData['currentScreenId'] = screen.id;
 
-    // 1. Check Exit from Home
-    if (input === '0' && screen.id === 'home') {
+    // 1. Check Exit from Home screens
+    if (input === '0' && (screen.id === 'home' || screen.id === 'bank-home' || screen.id === 'vas-home')) {
       this.endSession();
       return MenuRenderer.getExpiredScreen();
     }
@@ -277,6 +317,186 @@ export class SessionManager {
       if (lower === 'exit' || lower === '0. exit') {
         this.endSession();
         return MenuRenderer.getExpiredScreen();
+      }
+    }
+
+    // 2A. Pattern A: Apex Bank Home Screen (*120*321#)
+    if (screen.id === 'bank-home') {
+      this.session.screenHistory.push(screen);
+
+      if (input === '1') {
+        // Natural Language Intent input via Bank Front-Door
+        this.logEvent('AGENT_SELECTED', 'Apex Bank front-door routed to Zara AI Natural Language Router');
+        const nlpScreen = MenuRenderer.getNaturalLanguageInputScreen(this.session.language);
+        this.session.currentScreen = nlpScreen;
+        this.session.sessionData['activeNodes'] = ['feature-phone', 'ussd-gateway', 'enterprise-hook', 'channel-adapter', 'ai-router'];
+        this.notify();
+        return nlpScreen;
+      } else if (input === '2') {
+        // Traditional Banking Menu (Legacy Tree)
+        this.logEvent('SESSION_STARTED', 'Switched to Apex Bank legacy tree menu (Pattern A Fallback)');
+        const legacyScreen = MenuRenderer.getBankLegacyMenuScreen();
+        this.session.currentScreen = legacyScreen;
+        this.session.sessionData['activeNodes'] = ['feature-phone', 'ussd-gateway', 'enterprise-hook'];
+        this.notify();
+        return legacyScreen;
+      } else if (input === '3') {
+        // Quick Balance: dispatch to Financial Agent
+        const agent = AgentRegistry.getAgent('financial');
+        this.session.activeAgentId = agent.id;
+        this.session.sessionData['activeAgentName'] = agent.name;
+        this.session.sessionData['activeNodes'] = ['feature-phone', 'ussd-gateway', 'enterprise-hook', 'selected-agent'];
+        const agentResponse = await agent.handle('2', {
+          sessionId: this.session.sessionId,
+          msisdn: this.session.msisdn,
+          language: this.session.language,
+          entities: {},
+          sessionData: { ...this.session.sessionData, currentScreenId: 'fin-main-menu' },
+          creditsRemaining: this.creditsBalance
+        });
+        this.applyAgentResponse(agentResponse);
+        return this.session.currentScreen;
+      } else if (input === '4') {
+        // Send Cash Voucher: dispatch to Financial Agent
+        const agent = AgentRegistry.getAgent('financial');
+        this.session.activeAgentId = agent.id;
+        this.session.sessionData['activeAgentName'] = agent.name;
+        this.session.sessionData['activeNodes'] = ['feature-phone', 'ussd-gateway', 'enterprise-hook', 'selected-agent'];
+        const agentResponse = await agent.handle('1', {
+          sessionId: this.session.sessionId,
+          msisdn: this.session.msisdn,
+          language: this.session.language,
+          entities: {},
+          sessionData: { ...this.session.sessionData, currentScreenId: 'fin-main-menu' },
+          creditsRemaining: this.creditsBalance
+        });
+        this.applyAgentResponse(agentResponse);
+        return this.session.currentScreen;
+      } else {
+        return {
+          ...screen,
+          prompt: `Invalid option.\n\n${screen.prompt}`
+        };
+      }
+    }
+
+    // 2B. Pattern A: Apex Bank Legacy Menu
+    if (screen.id === 'bank-legacy-menu') {
+      if (input === '0') {
+        return this.returnToHome();
+      } else if (input === '1') {
+        return {
+          id: 'bank-legacy-balance',
+          type: 'menu',
+          title: 'Account Balances',
+          prompt: 'Apex Bank Accounts:\n• Cheque (...4821): R14,250.80\n• Savings (...9012): R3,420.00\n• Notice (...1142): R50,000.00\n\n0. Back',
+          options: [{ key: '0', label: 'Back' }],
+          footer: 'Reply:'
+        };
+      } else if (input === '2') {
+        return {
+          id: 'bank-legacy-transfer',
+          type: 'input',
+          title: 'Transfer Funds',
+          prompt: 'Apex Bank Transfer\n\nEnter recipient account number:\n(9-11 digits)',
+          allowTextInput: true,
+          footer: 'Reply:'
+        };
+      } else if (input === '3') {
+        // Buy Prepaid Power -> Cross-routed to Electricity Agent
+        this.logEvent('AGENT_SELECTED', 'Apex Bank cross-routed to Zara Electricity Agent');
+        const agent = AgentRegistry.getAgent('electricity');
+        this.session.activeAgentId = agent.id;
+        this.session.sessionData['activeAgentName'] = agent.name;
+        this.session.sessionData['activeNodes'] = ['feature-phone', 'ussd-gateway', 'enterprise-hook', 'selected-agent'];
+        const agentResponse = await agent.start({
+          sessionId: this.session.sessionId,
+          msisdn: this.session.msisdn,
+          language: this.session.language,
+          entities: {},
+          sessionData: this.session.sessionData,
+          creditsRemaining: this.creditsBalance
+        });
+        this.applyAgentResponse(agentResponse);
+        return this.session.currentScreen;
+      } else if (input === '4') {
+        return {
+          id: 'bank-legacy-notice',
+          type: 'menu',
+          title: '32-Day Notice',
+          prompt: '32-Day Notice Account\nBalance: R50,000.00\nInterest: 8.75% p.a.\n\n0. Back',
+          options: [{ key: '0', label: 'Back' }],
+          footer: 'Reply:'
+        };
+      } else {
+        return {
+          ...screen,
+          prompt: `Invalid option.\n\n${screen.prompt}`
+        };
+      }
+    }
+
+    if (screen.id === 'bank-legacy-balance' || screen.id === 'bank-legacy-notice') {
+      if (input === '0') {
+        const legacyScreen = MenuRenderer.getBankLegacyMenuScreen();
+        this.session.currentScreen = legacyScreen;
+        this.notify();
+        return legacyScreen;
+      }
+    }
+
+    // 2C. Pattern B: Kazang / Blue Label VAS Home Screen (*120*7727#)
+    if (screen.id === 'vas-home') {
+      this.session.screenHistory.push(screen);
+
+      if (input === '1') {
+        return {
+          id: 'vas-airtime',
+          type: 'input',
+          title: 'Buy Airtime',
+          prompt: 'Kazang Airtime Vending\n\nEnter Cell Number:\n(e.g. 0821234567)',
+          allowTextInput: true,
+          footer: 'Reply:'
+        };
+      } else if (input === '2') {
+        // Prepaid Electricity -> Hand off to Electricity Agent
+        this.logEvent('AGENT_SELECTED', 'Kazang VAS routed to Zara Electricity Agent');
+        const agent = AgentRegistry.getAgent('electricity');
+        this.session.activeAgentId = agent.id;
+        this.session.sessionData['activeAgentName'] = agent.name;
+        this.session.sessionData['activeNodes'] = ['feature-phone', 'ussd-gateway', 'enterprise-hook', 'selected-agent'];
+        const agentResponse = await agent.start({
+          sessionId: this.session.sessionId,
+          msisdn: this.session.msisdn,
+          language: this.session.language,
+          entities: {},
+          sessionData: this.session.sessionData,
+          creditsRemaining: this.creditsBalance
+        });
+        this.applyAgentResponse(agentResponse);
+        return this.session.currentScreen;
+      } else if (input === '3') {
+        return {
+          id: 'vas-bill',
+          type: 'input',
+          title: 'Pay Bill / DStv',
+          prompt: 'Kazang Bill Payments\n\nEnter DStv / Account Number:\n(e.g. 40291823)',
+          allowTextInput: true,
+          footer: 'Reply:'
+        };
+      } else if (input === '4') {
+        // Pattern B: Sub-Menu Injection -> Option 4 "Ask Zara AI (Type anything)"
+        this.logEvent('AGENT_SELECTED', 'Kazang VAS Menu Injection triggered -> Zara AI Natural Language Router');
+        const nlpScreen = MenuRenderer.getNaturalLanguageInputScreen(this.session.language);
+        this.session.currentScreen = nlpScreen;
+        this.session.sessionData['activeNodes'] = ['feature-phone', 'ussd-gateway', 'enterprise-hook', 'channel-adapter', 'ai-router'];
+        this.notify();
+        return nlpScreen;
+      } else {
+        return {
+          ...screen,
+          prompt: `Invalid option.\n\n${screen.prompt}`
+        };
       }
     }
 
@@ -350,7 +570,7 @@ export class SessionManager {
       }, 'info');
 
       // Update architecture highlight
-      this.session.sessionData['activeNodes'] = [
+      const activeNodes: ArchitectureNodeId[] = [
         'feature-phone',
         'ussd-gateway',
         'channel-adapter',
@@ -358,6 +578,10 @@ export class SessionManager {
         'agent-marketplace',
         'selected-agent'
       ];
+      if (this.session.partnerConfig && this.session.partnerConfig.patternType !== 'Marketplace') {
+        activeNodes.splice(2, 0, 'enterprise-hook');
+      }
+      this.session.sessionData['activeNodes'] = activeNodes;
 
       // Hand off to selected agent
       const agent = AgentRegistry.getAgent(intentRes.agentId);

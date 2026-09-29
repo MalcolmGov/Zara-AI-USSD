@@ -102,7 +102,15 @@ export const App: React.FC = () => {
     handleEndCall();
     await new Promise(res => setTimeout(res, 200));
 
-    // Dial first
+    if (scenarioId === 'bank') {
+      await handleDial('*120*321#');
+      return;
+    } else if (scenarioId === 'vas') {
+      await handleDial('*120*7727#');
+      return;
+    }
+
+    // Dial Zara AI first
     await handleDial('*120*9272#');
     await new Promise(res => setTimeout(res, 400));
 
@@ -387,6 +395,8 @@ export const App: React.FC = () => {
               activeNodes={telemetry.activeNodes}
               activeAgentName={telemetry.activeAgentName}
               lastApiName={telemetry.lastApiName}
+              serviceCode={telemetry.serviceCode}
+              partnerPattern={telemetry.partnerPattern}
             />
 
             {/* 3. Real-Time Developer Event Log */}

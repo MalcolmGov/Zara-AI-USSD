@@ -10,13 +10,16 @@ import {
   Zap, 
   Database, 
   MessageSquareShare,
-  ArrowRight
+  ArrowRight,
+  GitFork
 } from 'lucide-react';
 
 interface ArchitectureFlowProps {
   activeNodes: ArchitectureNodeId[];
   activeAgentName?: string;
   lastApiName?: string;
+  serviceCode?: string;
+  partnerPattern?: string;
 }
 
 interface StepNode {
@@ -29,13 +32,15 @@ interface StepNode {
 export const ArchitectureFlow: React.FC<ArchitectureFlowProps> = ({
   activeNodes,
   activeAgentName = 'Specialized Agent',
-  lastApiName = 'Enterprise API'
+  lastApiName = 'Enterprise API',
+  serviceCode = '*120*9272#',
+  partnerPattern = 'Marketplace'
 }) => {
   const steps: StepNode[] = [
     {
       id: 'feature-phone',
       label: 'Feature Phone',
-      sub: '*120*9272#',
+      sub: serviceCode,
       icon: <Smartphone className="w-4 h-4" />
     },
     {
@@ -49,6 +54,12 @@ export const ArchitectureFlow: React.FC<ArchitectureFlowProps> = ({
       label: 'USSD Gateway',
       sub: 'MNO Aggregator',
       icon: <Server className="w-4 h-4" />
+    },
+    {
+      id: 'enterprise-hook',
+      label: 'Partner Hook',
+      sub: partnerPattern === 'A' ? 'Pattern A (Proxy)' : partnerPattern === 'B' ? 'Pattern B (Inject)' : 'Enterprise Hook',
+      icon: <GitFork className="w-4 h-4" />
     },
     {
       id: 'channel-adapter',
@@ -100,7 +111,7 @@ export const ArchitectureFlow: React.FC<ArchitectureFlowProps> = ({
       </div>
 
       {/* Pipeline Strip */}
-      <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2">
         {steps.map((step, idx) => {
           const isActive = activeNodes.includes(step.id);
 

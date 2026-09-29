@@ -34,9 +34,19 @@ export const ZaraEnginePanel: React.FC<ZaraEnginePanelProps> = ({ telemetry }) =
           <div className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse glow-emerald" />
           <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2 font-tech">
             Zara AI Engine
-            <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono font-medium">
-              LIVE TELEMETRY
-            </span>
+            {telemetry.partnerPattern && telemetry.partnerPattern !== 'Marketplace' ? (
+              <span className={`text-xs px-2 py-0.5 rounded-full font-mono font-medium border ${
+                telemetry.partnerPattern === 'A'
+                  ? 'bg-blue-500/15 text-blue-300 border-blue-500/30'
+                  : 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+              }`}>
+                ENTERPRISE: {telemetry.partnerName} ({telemetry.serviceCode})
+              </span>
+            ) : (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono font-medium">
+                LIVE TELEMETRY
+              </span>
+            )}
           </h2>
         </div>
         <div className="flex items-center gap-3 text-xs text-slate-400 font-mono">
@@ -72,6 +82,18 @@ export const ZaraEnginePanel: React.FC<ZaraEnginePanelProps> = ({ telemetry }) =
           </div>
 
           <div className="grid grid-cols-2 gap-y-2 text-xs font-mono">
+            <div>
+              <span className="text-slate-500 block text-[10px]">SERVICE SHORTCODE</span>
+              <span className="text-emerald-400 font-bold">{telemetry.serviceCode || '*120*9272#'}</span>
+            </div>
+            <div>
+              <span className="text-slate-500 block text-[10px]">INTEGRATION MODE</span>
+              <span className={`font-bold truncate block ${
+                telemetry.partnerPattern === 'A' ? 'text-blue-400' : telemetry.partnerPattern === 'B' ? 'text-amber-400' : 'text-slate-200'
+              }`}>
+                {telemetry.partnerName || 'Zara Marketplace'}
+              </span>
+            </div>
             <div>
               <span className="text-slate-500 block text-[10px]">SESSION ID</span>
               <span className="text-slate-200 font-bold">{telemetry.sessionId}</span>

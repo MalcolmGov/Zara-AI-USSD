@@ -194,6 +194,59 @@ async function runTests() {
   sm.endSession();
   assert(sm.getCurrentScreen() === null, 'Session ended and cleaned up');
 
+  // TEST 13: Enterprise Partner Integration - Pattern A: Apex Bank (*120*321#)
+  console.log('\n--- Testing Pattern A: Apex Bank AI Front-Door (*120*321#) ---');
+  assert(ChannelAdapter.isServiceCode('*120*321#'), 'Apex Bank shortcode *120*321# recognized');
+  const bankConfig = ChannelAdapter.getPartnerConfig('*120*321#');
+  assert(bankConfig.mode === 'bank_frontdoor' && bankConfig.patternType === 'A', 'Bank config resolved to Pattern A (Reverse Proxy)');
+
+  const bankDialOk = await sm.startDialling('*120*321#');
+  assert(bankDialOk, 'Apex Bank session initiated');
+  const bankHome = sm.getCurrentScreen();
+  assert(bankHome?.id === 'bank-home', 'Apex Bank front-door home screen rendered');
+  assert(sm.getTelemetry().partnerPattern === 'A', 'Telemetry reflects Pattern A integration');
+
+  // Navigate to legacy menu
+  await sm.submitInput('2');
+  assert(sm.getCurrentScreen()?.id === 'bank-legacy-menu', 'Switched to Apex Bank legacy tree menu');
+
+  // Check balance in legacy menu
+  await sm.submitInput('1');
+  assert(sm.getCurrentScreen()?.id === 'bank-legacy-balance', 'Legacy balance screen rendered');
+
+  // Return to bank home
+  await sm.submitInput('0'); // back to legacy menu
+  await sm.submitInput('0'); // back to bank home
+  assert(sm.getCurrentScreen()?.id === 'bank-home', 'Returned to Apex Bank front-door home');
+
+  // Front-door AI request: bypass menus
+  await sm.submitInput('1'); // AI prompt
+  assert(sm.getCurrentScreen()?.id === 'natural-language-prompt', 'Opened AI input via Bank front-door');
+  await sm.submitInput('Transfer money');
+  assert(sm.getCurrentScreen()?.title.includes('Financial') || sm.getCurrentScreen()?.title.includes('Cash'), 'AI routed to Financial Agent from Bank Front-Door');
+  assert(sm.getTelemetry().activeNodes.includes('enterprise-hook'), 'Telemetry activeNodes includes enterprise-hook');
+  sm.endSession();
+
+  // TEST 14: Enterprise Partner Integration - Pattern B: Kazang VAS Menu Injection (*120*7727#)
+  console.log('\n--- Testing Pattern B: Kazang VAS Menu Injection (*120*7727#) ---');
+  assert(ChannelAdapter.isServiceCode('*120*7727#'), 'Kazang VAS shortcode *120*7727# recognized');
+  const vasConfig = ChannelAdapter.getPartnerConfig('*120*7727#');
+  assert(vasConfig.mode === 'vas_injection' && vasConfig.patternType === 'B', 'VAS config resolved to Pattern B (Sub-Menu Injection)');
+
+  const vasDialOk = await sm.startDialling('*120*7727#');
+  assert(vasDialOk, 'Kazang VAS session initiated');
+  const vasHome = sm.getCurrentScreen();
+  assert(vasHome?.id === 'vas-home', 'Kazang VAS legacy menu rendered with injected option');
+  assert(sm.getTelemetry().partnerPattern === 'B', 'Telemetry reflects Pattern B integration');
+
+  // Trigger injected option 4: Ask Zara AI
+  await sm.submitInput('4');
+  assert(sm.getCurrentScreen()?.id === 'natural-language-prompt', 'Option 4 opened Zara AI natural language prompt');
+  await sm.submitInput('Buy R50 electricity');
+  assert(sm.getCurrentScreen()?.title.includes('Electricity'), 'Marketplace routed to Electricity Agent from Kazang VAS sub-menu');
+  assert(sm.getTelemetry().activeNodes.includes('enterprise-hook'), 'VAS session activeNodes includes enterprise-hook');
+  sm.endSession();
+
   console.log('\n====================================================');
   console.log(`TEST SUMMARY: ${passed} PASSED, ${failed} FAILED`);
   console.log('====================================================');

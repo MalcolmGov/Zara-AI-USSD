@@ -81,6 +81,7 @@ const INTENT_RULES: IntentRule[] = [
     patterns: [
       /send money/i,
       /need money/i,
+      /transfer/i,
       /loan/i,
       /borrow/i,
       /cash/i,

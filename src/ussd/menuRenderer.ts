@@ -23,6 +23,59 @@ export class MenuRenderer {
     };
   }
 
+  // Pattern A: Apex Bank (AI Front-Door / Reverse Proxy)
+  static getBankHomeScreen(): UssdScreen {
+    return {
+      id: 'bank-home',
+      type: 'menu',
+      title: 'Apex Bank (*120*321#)',
+      prompt: 'Apex Bank Mobile\n[Pattern A: AI Front-Door]\n\n1. Type what you need (AI Assistant)\n2. Traditional Banking Menu\n3. Quick Balance\n4. Send Cash Voucher\n\n0. Exit',
+      options: [
+        { key: '1', label: 'Type what you need (AI Assistant)' },
+        { key: '2', label: 'Traditional Banking Menu' },
+        { key: '3', label: 'Quick Balance' },
+        { key: '4', label: 'Send Cash Voucher' },
+        { key: '0', label: 'Exit' }
+      ],
+      footer: 'Reply:'
+    };
+  }
+
+  static getBankLegacyMenuScreen(): UssdScreen {
+    return {
+      id: 'bank-legacy-menu',
+      type: 'menu',
+      title: 'Apex Bank (Legacy Tree)',
+      prompt: 'Apex Bank - Legacy Menu\n(Multi-tier classic tree)\n\n1. Balances & Statements\n2. Transfer to Account\n3. Buy Prepaid Power\n4. Notice Accounts\n\n0. Main menu',
+      options: [
+        { key: '1', label: 'Balances & Statements' },
+        { key: '2', label: 'Transfer to Account' },
+        { key: '3', label: 'Buy Prepaid Power' },
+        { key: '4', label: 'Notice Accounts' },
+        { key: '0', label: 'Main menu' }
+      ],
+      footer: 'Reply:'
+    };
+  }
+
+  // Pattern B: Kazang / Blue Label VAS (Sub-Menu Injection)
+  static getVasHomeScreen(): UssdScreen {
+    return {
+      id: 'vas-home',
+      type: 'menu',
+      title: 'Kazang VAS (*120*7727#)',
+      prompt: 'Kazang VAS & Retail\n[Pattern B: Menu Injection]\n\n1. Buy Airtime\n2. Prepaid Electricity\n3. Pay Bill / DStv\n4. Ask Zara AI (Type anything)\n\n0. Exit',
+      options: [
+        { key: '1', label: 'Buy Airtime' },
+        { key: '2', label: 'Prepaid Electricity' },
+        { key: '3', label: 'Pay Bill / DStv' },
+        { key: '4', label: 'Ask Zara AI (Type anything)' },
+        { key: '0', label: 'Exit' }
+      ],
+      footer: 'Reply:'
+    };
+  }
+
   static getNaturalLanguageInputScreen(langCode = 'en-ZA'): UssdScreen {
     const lang = LANGUAGES[langCode] || LANGUAGES['en-ZA'];
     return {
